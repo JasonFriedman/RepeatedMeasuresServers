@@ -403,16 +403,19 @@ bool StopContinuousSampling() {
 int GetFrameRate() {
 	ePiFrameRate eRate;
 
-	g_pdiDev.GetFrameRate(eRate);
+	bool result = g_pdiDev.GetFrameRate(eRate);
 
-	if (eRate==PI_FRATE_60) {
+	if (result == 0) {
+		printf("Error getting frame rate\n");
+		return -1;
+	} else if(eRate==PI_FRATE_60) {
 		printf("Frame rate is 60 Hz\n");
 		return 60;
 	} else if(eRate==PI_FRATE_120) {
 		printf("Frame rate is 120 Hz\n");
 		return 120;		
 	} else if(eRate==PI_FRATE_240) {
-		printf("Frame rate is 120 Hz\n");
+		printf("Frame rate is 240 Hz\n");
 		return 240;		
 	} else {
 		printf("Error getting frame rate\n");
@@ -446,7 +449,12 @@ bool SetFrameRate(int frameRate) {
 	else
 		printf("Error in setting frame rate: unknown value %d\n",frameRate);
 
-	return (g_pdiDev.SetFrameRate(eRate)>0);
+	bool result = g_pdiDev.SetFrameRate(eRate);
+
+	if (result == 0)
+		printf("Error in setting frame rate: received error from system");
+
+	return (result);
 }
 
 bool ResetFrameCount() {
